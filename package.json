@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "importData": "node import-data/seeders --import",
+    "deleteData": "node import-data/seeders --delete"
   },
   "dependencies": {
     "mongoose": "^5.12.14",
