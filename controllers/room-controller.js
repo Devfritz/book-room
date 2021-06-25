@@ -2,6 +2,7 @@ import Room from '../models/rooms-model.js';
 import mongoose from 'mongoose';
 import ErrorHandler from '../utils/errorHandler.js';
 import catchAsync from '../middleware/catchAsync.js';
+import ApiFeatures from '../utils/ApiFeatures.js';
 
 /**
  *
@@ -27,12 +28,13 @@ export const createRoom = catchAsync(async (req, res) => {
  */
 
 export const getAllRooms = catchAsync(async (req, res) => {
-  const getRooms = await Room.find();
+  const apiFeatures = new ApiFeatures(Room.find(), req.query).search;
+  const rooms = await apiFeatures.query;
 
   res.status(200).json({
     isStatus: true,
-    count: getRooms.length,
-    data: getRooms,
+    count: rooms.length,
+    data: rooms,
   });
 });
 
@@ -62,12 +64,6 @@ export const getOneRoom = catchAsync(async (req, res, next) => {
  */
 
 export const updateRooms = catchAsync(async (req, res) => {
-  // if (!mongoose.isValidObjectId(req.query.roomId)) {
-  //   return res.status(400).json({
-  //     isSucces: false,
-  //     message: 'invalid object id',
-  //   });
-  // }
   const room = await Room.findById(req.query.roomId);
 
   if (!room) return next(new ErrorHandler('Ressource not found', 404));
