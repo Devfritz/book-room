@@ -28,11 +28,23 @@ export const createRoom = catchAsync(async (req, res) => {
  */
 
 export const getAllRooms = catchAsync(async (req, res) => {
-  const apiFeatures = new ApiFeatures(Room.find(), req.query).search;
-  const rooms = await apiFeatures.query;
+  const resPerPage = 4;
+  const roomsCount = await Room.countDocuments();
+
+  const apiFeatures = new ApiFeatures(Room.find(), req.query).search().filter();
+
+  let rooms = await apiFeatures.query;
+  let filteredRoomsCount = rooms.length;
+
+  apiFeatures.pagination(resPerPage);
+  rooms = await apiFeatures.query;
 
   res.status(200).json({
     isStatus: true,
+    page: req.query.page,
+    roomsCount,
+    resPerPage,
+    filteredRoomsCount,
     count: rooms.length,
     data: rooms,
   });
